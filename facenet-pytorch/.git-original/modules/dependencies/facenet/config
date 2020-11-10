@@ -1,0 +1,9 @@
+[core]
+	bare = false
+	repositoryformatversion = 0
+	filemode = true
+	logallrefupdates = true
+	worktree = ../../../../dependencies/facenet/
+[remote "origin"]
+	url = https://github.com/davidsandberg/facenet.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
