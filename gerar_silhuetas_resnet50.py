@@ -36,10 +36,16 @@ def gerar_silhuetas(fnamex, dev):
     model.to(device)
     model.eval()
 
+    bad_files = []
     for f, filename in enumerate(fname):
         # Carrega e preprocessa uma imagem
         input_image = Image.open(filename)
-        input_tensor = preprocess(input_image)
+        try:
+            input_tensor = preprocess(input_image)
+        except:
+            bad_files.append(filename)
+            print('arquivo corrompido '+filename)
+            exit
 
         # Cria um minibatch contendo a imagem e envia para a GPU
         input_batch = input_tensor.unsqueeze(0).to(device)
@@ -78,8 +84,7 @@ if __name__ == '__main__':
 
     # Prepara e inicia 3 processos paralelos (para cada GPU)
     inicio = time.time()
-    print('Processamento iniciado')
-    print(time.strftime('%H:%M:%S', time.localtime()))
+    print(time.strftime('Processamento iniciado - %H:%M:%S', time.localtime()))
     p1 = Process(target=gerar_silhuetas, args=(fname1, 'cuda:0'))
     p1.start()
     p2 = Process(target=gerar_silhuetas, args=(fname2, 'cuda:1'))
@@ -91,7 +96,6 @@ if __name__ == '__main__':
     p1.join()
     p2.join()
     p3.join()
-    print('Processamento concluído')
-    print(time.strftime('%H:%M:%S', time.localtime()))
+    print(time.strftime('Processamento concluído - %H:%M:%S', time.localtime()))
     tempo_total = time.time() - inicio
     print("Tempo total: %02dm:%02ds" % divmod(tempo_total, 60))
