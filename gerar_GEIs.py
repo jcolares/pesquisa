@@ -119,8 +119,10 @@ def getCrop(sample_image, out_h, out_w):
         extRight = tuple(c[c[:, :, 0].argmax()][0])
         if extLeft[1] > 0 and extRight[1] < sample_image.shape[1]:
             new_img = sample_image[extTop[1]:extBot[1]]
-            new_img = image_resize(new_img, height=out_h)
-
+            try:
+                new_img = image_resize(new_img, height=out_h)
+            except:
+                return out_img
             thresh = cv2.threshold(new_img, 45, 255, cv2.THRESH_BINARY)[1]
             cnts = cv2.findContours(
                 thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -134,7 +136,8 @@ def getCrop(sample_image, out_h, out_w):
             newExtLeft = int(centroid_x - out_w/2)
             newExtRight = int(out_w/2 + centroid_x)
 
-            if newExtLeft > 0 and newExtRight < 700:  # sample_image.shape[1]:
+            # sample_image.shape[1]:
+            if newExtLeft+50 > 0 and newExtRight < 700:
 
                 new_img = new_img[0:len(new_img), newExtLeft:newExtRight]
 
@@ -190,57 +193,9 @@ def getGEI(paths):
     print("Geração de GEIs finalizada ...")
 
 
-def getGEI2(paths, widths, heights, cycles):
-    newPathsuffix = '_GEI'
-    print("Starting to save GEIs ...")
-    image_stack = []
-    for i in range(len(paths)):
-        for j in range(len(paths[i])):
-            gei_image_num = 0
-            count = 1
-            for k in range(len(paths[i][j])):
-                cycle = cycles[i][j]
-                path_imagem = paths[i][j][k]
-                image_og = cv2.imread(path_imagem, cv2.IMREAD_GRAYSCALE)
-                max_w = max(max(widths[i]))
-                max_h = max(max(heights[i]))
-                # if len(image_og > 0):
-                try:
-                    #image = getCroppedImage(cv2.cvtColor(image_og, cv2.COLOR_RGB2GRAY), max_w, max_h)
-                    image = getCrop(image_og, 240, 240)
-                    #image = cv2.resize(image, (240, 240))
-                # else:
-                except:
-                    continue
-                '''
-                test_image_name = paths[i][j][k].replace(
-                    basedir, basedir+'_teste')
-                os.makedirs(os.path.dirname(
-                    test_image_name) + "/", exist_ok=True)
-                cv2.imwrite(test_image_name, image)
-                '''
-                if np.sum(image) > 0:
-                    image_stack.append(image)
-                    count += 1
-            if np.sum(image_stack) == 0:
-                continue
-            gei_image = np.zeros((240, 240))  # , dtype=np.int)
-            gei_image = np.mean(image_stack, axis=0)
-            gei_image = gei_image.astype(np.int)
-            gei_image_name = paths[i][j][k][:-7].replace(
-                basedir, basedir+newPathsuffix)+"{0:03}".format(gei_image_num) + '.jpg'
-            os.makedirs(os.path.dirname(
-                gei_image_name) + "/", exist_ok=True)
-            cv2.imwrite(gei_image_name, gei_image)
-            gei_image_num += 1
-            count += 1
-            image_stack = []
-    print("Geração de GEIs finalizada ...")
-
-
 if __name__ == "__main__":
 
-    basedir = '/projects/jeff/TUMGAIDimage_silhouettes_101/'
+    basedir = '/projects/jeff/TUMGAIDimage_silhouettes_50'
     path_list, path_sub, paths = [], [], []
     pessoas = next(os.walk(basedir))[1]
     pessoas = sorted(pessoas)
