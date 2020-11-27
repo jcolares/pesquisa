@@ -39,8 +39,8 @@ def gerar_silhuetas(fnamex, dev):
     bad_files = []
     for f, filename in enumerate(fname):
         # Carrega e preprocessa uma imagem
-        input_image = Image.open(filename)
         try:
+            input_image = Image.open(filename)
             input_tensor = preprocess(input_image)
         except:
             bad_files.append(filename)
@@ -67,7 +67,7 @@ def gerar_silhuetas(fnamex, dev):
 
 if __name__ == '__main__':
 
-    basedir = '/home/jeff/github/pesquisa/data/TUMGaid'
+    basedir = '/projects/jeff/TUMGAIDimage'
     fname, _ = listar_imagens(basedir)
 
     # Define transformações que serão aplicadas às imagens

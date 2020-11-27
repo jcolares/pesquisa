@@ -38,8 +38,8 @@ def gerar_silhuetas(fnamex, dev):
     bad_files = []
     for f, filename in enumerate(fname):
         # Carrega e preprocessa uma imagem
-        input_image = Image.open(filename)
         try:
+            input_image = Image.open(filename)
             input_tensor = preprocess(input_image)
         except:
             bad_files.append(filename)
