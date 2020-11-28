@@ -39,11 +39,15 @@ if __name__ == "__main__":
     print('Processamento iniciado')
     facecrop = [it.replace(basedir, basedir+'_faces') for it in fname]
     for f, filename in enumerate(fname):
-        img = Image.open(filename)
-        box, prob = mtcnn.detect(img)
+        try:
+            img = Image.open(filename)
+            box, prob = mtcnn.detect(img)
+        except:
+            print('Falha no processamento do arquivo '+filename)
+            continue
         if prob[0] and prob[0] >= 0.5:
             extract_face(img, box[0], save_path=facecrop[f])
-    print('Processamento concluído')
+    print('Processamento concluido')
     print(time.strftime('%H:%M:%S', time.localtime()))
     tempo_total = time.time() - inicio
     print("Tempo total: %02dm:%02ds" % divmod(tempo_total, 60))

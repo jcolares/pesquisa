@@ -23,7 +23,10 @@ Gait-Recognition
 segmentation
 SilhouetteCNN
 Ensaios
+runs
 
 #ignorar chkeckpoints
 *.pth
 
+
+facenet-pytorch/__init__.py
