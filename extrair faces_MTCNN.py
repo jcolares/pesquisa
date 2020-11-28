@@ -21,14 +21,14 @@ def listar_imagens(basedir):
 
 if __name__ == "__main__":
 
-    # ParÃ¢metros
-    basedir = '/home/jeff/github/pesquisa/data/TUMGaid'
+    # Parâmetros
+    basedir = '/projects/jeff/TUMGAIDimage'
 
     # Checar se hÃ¡ GPU disponÃ­vel
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print('Running on device: {}'.format(device))
 
-    # Definir parÃ¢metros do mÃ³dulo MTCNN
+    # Definir parÃ¢metros do módulo MTCNN
     mtcnn = MTCNN(keep_all=False, device=device, post_process=False)
 
     # Obter lista de arquivos e diretÃ³rios
@@ -39,11 +39,15 @@ if __name__ == "__main__":
     print('Processamento iniciado')
     facecrop = [it.replace(basedir, basedir+'_faces') for it in fname]
     for f, filename in enumerate(fname):
-        img = Image.open(filename)
-        box, prob = mtcnn.detect(img)
+        try:
+            img = Image.open(filename)
+            box, prob = mtcnn.detect(img)
+        except:
+            print('Falha no processamento do arquivo '+filename)
+            continue
         if prob[0] and prob[0] >= 0.5:
             extract_face(img, box[0], save_path=facecrop[f])
-    print('Processamento concluÃ­do')
+    print('Processamento concluido')
     print(time.strftime('%H:%M:%S', time.localtime()))
     tempo_total = time.time() - inicio
     print("Tempo total: %02dm:%02ds" % divmod(tempo_total, 60))
