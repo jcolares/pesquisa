@@ -6,7 +6,7 @@ import time
 
 
 def listar_imagens(basedir):
-    # ObtÃ©m lista de imagens armazenadas no baseDir
+    # Obtém lista de imagens armazenadas no baseDir
     fname = []
     dname = []
     for root, d_names, f_names in os.walk(basedir):
@@ -22,16 +22,16 @@ def listar_imagens(basedir):
 if __name__ == "__main__":
 
     # Parâmetros
-    basedir = '/projects/jeff/TUMGAIDimage'
+    basedir = '/home/jeff/github/pesquisa/data/TUMGaid'
 
-    # Checar se hÃ¡ GPU disponÃ­vel
+    # Checar se há GPU disponível
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print('Running on device: {}'.format(device))
 
-    # Definir parÃ¢metros do módulo MTCNN
+    # Definir parâmetros do módulo MTCNN
     mtcnn = MTCNN(keep_all=False, device=device, post_process=False)
 
-    # Obter lista de arquivos e diretÃ³rios
+    # Obter lista de arquivos e diretórios
     fname, dname = listar_imagens(basedir)
 
     # Detectar faces e salvar na pasta facecrops
