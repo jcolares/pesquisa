@@ -1,3 +1,9 @@
 {
-    "python.pythonPath": "/home/jeff/anaconda3/envs/pesquisa/bin/python"
+    "python.pythonPath": "/home/jeff/anaconda3/envs/pesquisa/bin/python",
+    "python.formatting.autopep8Args": [
+        "--max-line-length",
+        "120",
+        "--experimental"
+    ],
+    "jupyter.jupyterServerType": "local"
 }

@@ -1,4 +1,5 @@
-from facenet_pytorch import MTCNN, InceptionResnetV1, fixed_image_standardization, training
+from facenet_pytorch import MTCNN, InceptionResnetV1
+from facenet_pytorch import fixed_image_standardization, training
 import torch
 from torch.utils.data import DataLoader, SubsetRandomSampler
 from torch import optim
@@ -8,7 +9,7 @@ from torchvision import datasets, transforms
 import numpy as np
 import os
 
-data_dir = '/projects/jeff/TUMGAIDimage_faces'
+data_dir = '/projects/jeff/TUMGAIDimage_facecrops'
 
 batch_size = 32
 epochs = 8
@@ -20,7 +21,7 @@ trans = transforms.Compose([
     fixed_image_standardization
 ])
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 print('Running on device: {}'.format(device))
 
 dataset = datasets.ImageFolder(data_dir, transform=trans)
@@ -33,8 +34,7 @@ val_inds = img_inds[int(0.8 * len(img_inds)):]
 resnet = InceptionResnetV1(
     classify=True,
     pretrained='vggface2',
-    num_classes=len(dataset.class_to_idx)
-).to(device)
+    num_classes=len(dataset.class_to_idx)).to(device)
 
 optimizer = optim.Adam(resnet.parameters(), lr=0.001)
 scheduler = MultiStepLR(optimizer, [5, 10])
@@ -101,6 +101,5 @@ for epoch in range(epochs):
         writer=writer
     )
 
-torch.save(resnet.state_dict(),
-           '/home/jeff/github/pesquisa/modelos/model_dict.pth')
+torch.save(resnet.state_dict(), '/home/jeff/github/pesquisa/modelos/model_dict.pth')
 writer.close()
