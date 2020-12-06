@@ -101,5 +101,5 @@ for epoch in range(epochs):
         writer=writer
     )
 
-torch.save(resnet.state_dict(), '/home/jeff/github/pesquisa/modelos/model_dict.pth')
+torch.save(resnet.state_dict(), '/home/jeff/github/pesquisa/modelos/faces_inceptionResnetV1_model_dict.pth')
 writer.close()

@@ -32,12 +32,13 @@ if __name__ == "__main__":
 
     # Create an inception resnet (in eval mode):
     resnet = InceptionResnetV1(pretrained='vggface2', num_classes=305).eval()
-    resnet.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/model_dict.pth'))
+    resnet.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/faces_inceptionResnetV1_model_dict.pth'))
     # If using for VGGFace2 classification
     resnet.classify = True
 
     # Imagens
-    basedir = '/projects/jeff/TUMGAIDimage_facecrops'
+    #basedir = '/projects/jeff/TUMGAIDimage_facecrops'
+    basedir = '/projects/jeff/TUMGAIDimage_LT_facecrops'
 
     # carregar imagem aleatória
     fname, dname = listar_imagens(basedir)
