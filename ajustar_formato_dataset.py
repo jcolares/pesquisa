@@ -22,8 +22,8 @@ def listar_imagens(basedir):
 
 if __name__ == "__main__":
 
-    source_root = '/projects/jeff/TUMGAIDimage_faces'
-    dest_root = '/projects/jeff/TUMGAIDimage_facecrops'
+    source_root = '/projects/jeff/TUMGAIDimage_silhouettes_50_GEI'
+    dest_root = '/projects/jeff/TUMGAIDimage_50_GEI'
 
     fname, _ = listar_imagens(source_root)
     for filepath in fname:
