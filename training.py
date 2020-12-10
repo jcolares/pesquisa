@@ -17,7 +17,7 @@ class Logger(object):
     def __call__(self, loss, metrics, i):
         track_str = '\r{} | {:5d}/{:<5d}| '.format(self.mode, i + 1, self.length)
         loss_str = 'loss: {:9.4f} | '.format(self.fn(loss, i))
-        metric_str = ' | '.join('{}: {:9.4f}'.format(k, self.fn(v, i)) for k, v in metrics.items())
+        metric_str = ' |'.join('{}: {:6.4f}'.format(k, self.fn(v, i)) for k, v in metrics.items())
         print(track_str + loss_str + metric_str + '   ', end='')
         if i + 1 == self.length:
             print('')
@@ -54,16 +54,67 @@ class BatchTimer(object):
         return torch.tensor(elapsed)
 
 
-def ranking(logits, y):
+def accuracy(logits, y):
     _, preds = torch.max(logits, 1)
     return (preds == y).float().mean()
 
 
+'''
 def accuracy(logits, y):
     _, preds = torch.max(logits, 1)
     r1 = (preds == y).float().mean()
-    r2 = (y in preds[:4]).float().mean()
-    return r3
+    # r2a, r2b = torch.topk(logits, 5)
+    # print(r2a)
+    # print(r2b)
+    # print(torch.topk(logits, 5)[1])
+    # print(y in r2b)
+    # print(y in torch.topk(logits, 5)[1])
+    r1 = (y in torch.topk(logits, 5)[1]).float().mean()
+    # print(r1)
+    return r1
+'''
+
+
+def rank5(logits, y):
+    hits = 0
+    i = 0
+    for gt in y:
+        preds = torch.topk(logits, 5)[1]
+        if gt in preds[i]:
+            hits += 1
+        #print('y: {}, pred: {}, hits: {} '.format(gt, preds[i], hits))
+        i += 1
+    r5 = np.array(hits/len(y))
+    #print('{}, = {}/{}'.format(r5, hits, len(y)))
+    return torch.from_numpy(r5)
+
+
+def rank10(logits, y):
+    hits = 0
+    i = 0
+    for gt in y:
+        preds = torch.topk(logits, 10)[1]
+        if gt in preds[i]:
+            hits += 1
+        #print('y: {}, pred: {}, hits: {} '.format(gt, preds[i], hits))
+        i += 1
+    r10 = np.array(hits/len(y))
+    #print('{}, = {}/{}'.format(r10, hits, len(y)))
+    return torch.from_numpy(r10)
+
+
+def rank20(logits, y):
+    hits = 0
+    i = 0
+    for gt in y:
+        preds = torch.topk(logits, 20)[1]
+        if gt in preds[i]:
+            hits += 1
+        #print('y: {}, pred: {}, hits: {} '.format(gt, preds[i], hits))
+        i += 1
+    r20 = np.array(hits/len(y))
+    #print('{}, = {}/{}'.format(r20, hits, len(y)))
+    return torch.from_numpy(r20)
 
 
 def pass_epoch(
@@ -102,7 +153,7 @@ def pass_epoch(
     for i_batch, (x, y) in enumerate(loader):
         x = x.to(device)
         y = y.to(device)
-        y_pred = model(x)
+        y_pred = model(x.float())
         loss_batch = loss_fn(y_pred, y)
 
         if model.training:

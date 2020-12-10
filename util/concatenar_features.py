@@ -2,8 +2,10 @@ import os
 import numpy as np
 
 if __name__ == "__main__":
-    src_dir = '/projects/jeff/TUMGAIDfeatures_LT'
-    dst_dir = '/projects/jeff/TUMGAIDfeatures_LT_FULL'
+    src_dir = '/projects/jeff/TUMGAIDfeatures'
+    dst_dir = '/projects/jeff/TUMGAIDfeatures_FULL'
+    #src_dir = '/projects/jeff/TUMGAIDfeatures_LT'
+    #dst_dir = '/projects/jeff/TUMGAIDfeatures_LT_FULL'
 
     dir_list = next(os.walk(src_dir))[1]
 

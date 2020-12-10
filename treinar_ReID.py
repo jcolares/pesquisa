@@ -1,7 +1,7 @@
 import modelos
-import torchvision
-import matplotlib.pyplot as plt
-import torchvision.models as models
+#import torchvision
+#import matplotlib.pyplot as plt
+#import torchvision.models as models
 import os
 import numpy as np
 from torchvision import datasets, transforms
@@ -15,9 +15,9 @@ np.random.seed(23)
 torch.manual_seed(23)
 
 # Parâmetros
-data_dir = '/projects/jeff/TUMGAIDimage_50_GEI'
+data_dir = '/projects/jeff/TUMGAIDfeatures_FULL'
 batch_size = 4
-epochs = 100
+epochs = 50
 workers = 8
 
 # Transformações aplicadas ao dataset
@@ -31,7 +31,7 @@ trans = transforms.Compose([
 ])
 
 # Dataset
-dataset = datasets.ImageFolder(data_dir, transform=trans)
+dataset = datasets.DatasetFolder(data_dir, loader=modelos.features_loader, extensions=('feat'), transform=None)
 img_inds = np.arange(len(dataset))
 np.random.shuffle(img_inds)
 train_inds = img_inds[:int(0.8 * len(img_inds))]
@@ -56,7 +56,7 @@ device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 print('Running on device: {}'.format(device))
 
 # Configura a rede
-net = modelos.min2019()
+net = modelos.ReID()
 net = net.to(device)
 
 optimizer = optim.SGD(net.parameters(), lr=0.001)
@@ -98,5 +98,5 @@ for epoch in range(epochs):
         writer=writer
     )
 
-torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/GEI_min2019_model_dict.pth')
+torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/ReID_model_dict.pth')
 writer.close()

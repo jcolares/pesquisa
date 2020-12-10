@@ -1,56 +1,37 @@
+import os
+import numpy as np
+from torchvision import datasets, transforms
+from torch.utils.tensorboard import SummaryWriter
+from torch.optim.lr_scheduler import MultiStepLR
+from torch import optim
+from torch.utils.data import DataLoader, SubsetRandomSampler
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from facenet_pytorch import fixed_image_standardization, training
 import torch
-from torch.utils.data import DataLoader, SubsetRandomSampler
-from torch import optim
-from torch.optim.lr_scheduler import MultiStepLR
-from torch.utils.tensorboard import SummaryWriter
-from torchvision import datasets, transforms
-import numpy as np
-import os
+np.random.seed(23)
+torch.manual_seed(23)
 
+# Parâmetros
 data_dir = '/projects/jeff/TUMGAIDimage_facecrops'
-
 batch_size = 32
-epochs = 8
-workers = 0 if os.name == 'nt' else 8
+epochs = 10
+workers = 8
 
+# Transformações aplicadas ao dataset
 trans = transforms.Compose([
     np.float32,
     transforms.ToTensor(),
     fixed_image_standardization
 ])
 
-device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
-print('Running on device: {}'.format(device))
-
+# Dataset
 dataset = datasets.ImageFolder(data_dir, transform=trans)
 img_inds = np.arange(len(dataset))
 np.random.shuffle(img_inds)
 train_inds = img_inds[:int(0.8 * len(img_inds))]
-val_inds = img_inds[int(0.8 * len(img_inds)):]
+val_inds = np.setdiff1d(img_inds, train_inds)
 
-
-resnet = InceptionResnetV1(
-    classify=True,
-    pretrained='vggface2',
-    num_classes=len(dataset.class_to_idx)).to(device)
-
-optimizer = optim.Adam(resnet.parameters(), lr=0.001)
-scheduler = MultiStepLR(optimizer, [5, 10])
-
-trans = transforms.Compose([
-    np.float32,
-    transforms.ToTensor(),
-    fixed_image_standardization
-])
-
-dataset = datasets.ImageFolder(data_dir, transform=trans)
-img_inds = np.arange(len(dataset))
-np.random.shuffle(img_inds)
-train_inds = img_inds[:int(0.8 * len(img_inds))]
-val_inds = img_inds[int(0.8 * len(img_inds)):]
-
+# Dataloaders
 train_loader = DataLoader(
     dataset,
     num_workers=workers,
@@ -64,6 +45,18 @@ val_loader = DataLoader(
     sampler=SubsetRandomSampler(val_inds)
 )
 
+# Usar CUDA
+device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+print('Running on device: {}'.format(device))
+
+# Configura a rede
+resnet = InceptionResnetV1(
+    classify=True,
+    pretrained='vggface2',
+    num_classes=len(dataset.class_to_idx)).to(device)
+
+optimizer = optim.Adam(resnet.parameters(), lr=0.001)
+scheduler = MultiStepLR(optimizer, [5, 10])
 loss_fn = torch.nn.CrossEntropyLoss()
 metrics = {
     'fps': training.BatchTimer(),

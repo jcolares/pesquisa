@@ -1,5 +1,3 @@
-#from facenet_pytorch import MTCNN, InceptionResnetV1
-from facenet_pytorch import fixed_image_standardization
 import torch
 import numpy as np
 import os
@@ -34,11 +32,7 @@ if __name__ == "__main__":
     ])
 
     # Create an inception net (in eval mode):
-    #net = models.resnet18()
     net = modelos.min2019()
-    # num_ftrs = net.fc.in_features  # num de features de entrada na FC
-    # net.fc = torch.nn.Linear(num_ftrs, 305)  # nova FC com novo num de features de saida
-    #net = net.to(device)
     net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/GEI_min2019_model_dict.pth'))
 
     # Imagens
