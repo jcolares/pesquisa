@@ -16,8 +16,8 @@ torch.manual_seed(23)
 
 # Parâmetros
 data_dir = '/projects/jeff/TUMGAIDfeatures_FULL'
-batch_size = 4
-epochs = 50
+batch_size = 8
+epochs = 30
 workers = 8
 
 # Transformações aplicadas ao dataset
@@ -98,5 +98,5 @@ for epoch in range(epochs):
         writer=writer
     )
 
-torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/ReID_model_dict.pth')
+torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/ReID4_model_dict.pth')
 writer.close()

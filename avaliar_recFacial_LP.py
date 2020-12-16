@@ -16,7 +16,7 @@ import torch
 # Parâmetros
 data_dir = '/projects/jeff/TUMGAIDimage_LT_facecrops'
 batch_size = 30
-epochs = 5
+epochs = 2
 workers = 8
 
 # Transformações aplicadas ao dataset

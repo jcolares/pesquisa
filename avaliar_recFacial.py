@@ -14,9 +14,10 @@ np.random.seed(23)
 torch.manual_seed(23)
 
 # Parâmetros
+#data_dir = '/projects/jeff/TUMGAIDimage_facecrops'
 data_dir = '/projects/jeff/TUMGAIDimage_facecrops'
-batch_size = 100
-epochs = 5
+batch_size = 1
+epochs = 2
 workers = 8
 
 # Transformações aplicadas ao dataset
@@ -30,15 +31,19 @@ trans = transforms.Compose([
 dataset = datasets.ImageFolder(data_dir, transform=trans)
 img_inds = np.arange(len(dataset))
 np.random.shuffle(img_inds)
-train_inds = img_inds[:int(0.8 * len(img_inds))]
-val_inds = np.setdiff1d(img_inds, train_inds)
+#train_inds = img_inds[:int(0.8 * len(img_inds))]
+#val_inds = np.setdiff1d(img_inds, train_inds)
+train_inds = img_inds[:int(0.7 * len(img_inds))]
+val_test_inds = np.setdiff1d(img_inds, train_inds)
+val_inds = img_inds[:int(0.5 * len(val_test_inds))]
+test_inds = img_inds[int(0.5 * len(val_test_inds)):]
 
 # Dataloaders
 val_loader = DataLoader(
     dataset,
     num_workers=workers,
     batch_size=batch_size,
-    sampler=SubsetRandomSampler(val_inds)
+    sampler=SubsetRandomSampler(test_inds)
 )
 
 # Usar CUDA

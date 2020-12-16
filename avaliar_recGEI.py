@@ -11,17 +11,19 @@ np.random.seed(23)
 torch.manual_seed(23)
 
 # Parâmetros
-data_dir = '/projects/jeff/TUMGAIDimage_50_GEI'
-batch_size = 30
-epochs = 5
+#data_dir = '/projects/jeff/TUMGAIDimage_50_GEI'
+#data_dir = '/projects/jeff/TUMGAIDimage_50_GEI_normal'
+
+batch_size = 1
+epochs = 3
 workers = 8
 
 # Transformações aplicadas ao dataset
 trans = transforms.Compose([
     transforms.Grayscale(num_output_channels=1),
     transforms.Resize(240),
-    transforms.RandomCrop(240, pad_if_needed=True),  # padding=2),
-    transforms.RandomHorizontalFlip(),
+    # transforms.RandomCrop(240, pad_if_needed=True),  # padding=2),
+    # transforms.RandomHorizontalFlip(),
     np.float32,
     transforms.ToTensor()
 ])
@@ -30,27 +32,34 @@ trans = transforms.Compose([
 dataset = datasets.ImageFolder(data_dir, transform=trans)
 img_inds = np.arange(len(dataset))
 np.random.shuffle(img_inds)
-train_inds = img_inds[:int(0.8 * len(img_inds))]
-val_inds = np.setdiff1d(img_inds, train_inds)
+#train_inds = img_inds[:int(0.8 * len(img_inds))]
+#val_inds = np.setdiff1d(img_inds, train_inds)
+train_inds = img_inds[:int(0.7 * len(img_inds))]
+val_test_inds = np.setdiff1d(img_inds, train_inds)
+val_inds = img_inds[:int(0.5 * len(val_test_inds))]
+test_inds = img_inds[int(0.5 * len(val_test_inds)):]
 
 # Dataloaders
 val_loader = DataLoader(
     dataset,
     num_workers=workers,
     batch_size=batch_size,
-    sampler=SubsetRandomSampler(val_inds)
+    sampler=SubsetRandomSampler(test_inds)
     #sampler=BatchSampler(val_inds, False)
 )
 
 # Usar CUDA
 device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+#device = torch.device('cpu')
 print('Running on device: {}'.format(device))
 
 # Modelo
-net = modelos.min2019()
+#net = modelos.min2019()
+net = modelos.min2019b(classify=False, num_classes=None)
+#net = modelos.gaitRec(classify=False, num_classes=None)
 net = net.to(device)
-net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/GEI_min2019_model_dict.pth'))
-
+net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/GEI_min2019b_32_model_dict.pth'))
+# net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/GEI_gaitRec_normal_model_dict.pth'))
 
 loss_fn = torch.nn.CrossEntropyLoss()
 metrics = {

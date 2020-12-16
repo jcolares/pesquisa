@@ -15,10 +15,11 @@ np.random.seed(23)
 torch.manual_seed(23)
 
 # Parâmetros
-data_dir = '/projects/jeff/TUMGAIDimage_50_GEI'
+data_dir = '/projects/jeff/TUMGAIDimage_50_GEI_normal_32'
 batch_size = 4
-epochs = 100
+epochs = 60
 workers = 8
+
 
 # Transformações aplicadas ao dataset
 trans = transforms.Compose([
@@ -34,8 +35,12 @@ trans = transforms.Compose([
 dataset = datasets.ImageFolder(data_dir, transform=trans)
 img_inds = np.arange(len(dataset))
 np.random.shuffle(img_inds)
-train_inds = img_inds[:int(0.8 * len(img_inds))]
-val_inds = np.setdiff1d(img_inds, train_inds)
+#train_inds = img_inds[:int(0.8 * len(img_inds))]
+#val_inds = np.setdiff1d(img_inds, train_inds)
+train_inds = img_inds[:int(0.7 * len(img_inds))]
+val_test_inds = np.setdiff1d(img_inds, train_inds)
+val_inds = img_inds[:int(0.5 * len(val_test_inds))]
+test_inds = img_inds[int(0.5 * len(val_test_inds)):]
 
 # Dataloaders
 train_loader = DataLoader(
@@ -53,13 +58,16 @@ val_loader = DataLoader(
 
 # Usar CUDA
 device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+# DEBUG ONLY: device = torch.device('cpu')
 print('Running on device: {}'.format(device))
 
 # Configura a rede
-net = modelos.min2019()
+num_classes = None  # None ou numero
+net = modelos.min2019b(classify=True, num_classes=32)
+#net = modelos.gaitRec(classify=True, num_classes=num_classes)
 net = net.to(device)
 
-optimizer = optim.SGD(net.parameters(), lr=0.001)
+optimizer = optim.SGD(net.parameters(), lr=0.0001)
 scheduler = MultiStepLR(optimizer, [5, 10])
 loss_fn = torch.nn.CrossEntropyLoss()
 metrics = {
@@ -97,6 +105,12 @@ for epoch in range(epochs):
         batch_metrics=metrics, show_running=True, device=device,
         writer=writer
     )
+if num_classes is None:
+    fill = ''
+else:
+    fill = '_'+str(num_classes)
 
-torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/GEI_min2019_model_dict.pth')
+#torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/GEI_min2019b{}_model_dict.pth'.format(fill))
+torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/GEI_min2019b_32{}_model_dict.pth'.format(fill))
+#torch.save(net.state_dict(), '/home/jeff/github/pesquisa/modelos/GEI_gaitRec_normal{}_model_dict.pth'.format(fill))
 writer.close()

@@ -12,7 +12,7 @@ import numpy as np
 
 # Parâmetros
 data_dir = '/projects/jeff/TUMGAIDfeatures_LT_FULL'
-batch_size = 30
+batch_size = 1
 epochs = 5
 workers = 8
 
@@ -50,7 +50,7 @@ print('Running on device: {}'.format(device))
 # Modelo
 net = modelos.ReID()
 net = net.to(device)
-net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/ReID_model_dict.pth'))
+net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/ReID4_model_dict.pth'))
 
 
 loss_fn = torch.nn.CrossEntropyLoss()

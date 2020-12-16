@@ -44,8 +44,9 @@ if __name__ == "__main__":
     ])
 
     # Create a neural net (in feature extraction mode):
-    net = modelos.min2019feat()
-    net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/GEI_min2019_model_dict.pth'))
+    net = modelos.min2019b(classify=True, num_classes=None)
+    net.load_state_dict(torch.load('/home/jeff/github/pesquisa/modelos/GEI_min2019b_305_todasAsIDsNorm_model_dict.pth'))
+    net.eval()
 
     # Imagens
     #source_dir = '/projects/jeff/TUMGAIDimage_50_GEI'
@@ -67,3 +68,4 @@ if __name__ == "__main__":
         i += 1
         if i % 1000 == 0:
             print('Processados {} arquivos de {}.'.format(i, len(fname)))
+    print('Finalizado')

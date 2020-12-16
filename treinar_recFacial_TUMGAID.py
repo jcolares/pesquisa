@@ -28,8 +28,12 @@ trans = transforms.Compose([
 dataset = datasets.ImageFolder(data_dir, transform=trans)
 img_inds = np.arange(len(dataset))
 np.random.shuffle(img_inds)
-train_inds = img_inds[:int(0.8 * len(img_inds))]
-val_inds = np.setdiff1d(img_inds, train_inds)
+#train_inds = img_inds[:int(0.8 * len(img_inds))]
+#val_inds = np.setdiff1d(img_inds, train_inds)
+train_inds = img_inds[:int(0.7 * len(img_inds))]
+val_test_inds = np.setdiff1d(img_inds, train_inds)
+val_inds = img_inds[:int(0.5 * len(val_test_inds))]
+test_inds = img_inds[int(0.5 * len(val_test_inds)):]
 
 # Dataloaders
 train_loader = DataLoader(

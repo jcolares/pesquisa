@@ -30,3 +30,4 @@ if __name__ == "__main__":
             new_filename = gei.replace(src_dir, dst_dir).replace('.gei', '.feat')
             os.makedirs(os.path.dirname(new_filename) + "/", exist_ok=True)
             np.savetxt(new_filename, reid_feat, delimiter=',')
+    print('Finalizado')

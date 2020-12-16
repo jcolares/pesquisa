@@ -117,6 +117,20 @@ def rank20(logits, y):
     return torch.from_numpy(r20)
 
 
+def rank50(logits, y):
+    hits = 0
+    i = 0
+    for gt in y:
+        preds = torch.topk(logits, 50)[1]
+        if gt in preds[i]:
+            hits += 1
+        #print('y: {}, pred: {}, hits: {} '.format(gt, preds[i], hits))
+        i += 1
+    r50 = np.array(hits/len(y))
+    #print('{}, = {}/{}'.format(r20, hits, len(y)))
+    return torch.from_numpy(r50)
+
+
 def pass_epoch(
     model, loss_fn, loader, optimizer=None, scheduler=None,
     batch_metrics={'time': BatchTimer()}, show_running=True,
